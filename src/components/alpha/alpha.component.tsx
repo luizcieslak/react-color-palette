@@ -9,10 +9,11 @@ import { Interactive } from "../interactive";
 interface IAlphaProps {
   readonly color: IColor;
   readonly onChange: (color: IColor) => void;
+  readonly onChangeComplete?: (color: IColor) => void;
   readonly disabled: boolean;
 }
 
-export const Alpha = memo(({ color, onChange, disabled }: IAlphaProps) => {
+export const Alpha = memo(({ color, onChange, onChangeComplete, disabled }: IAlphaProps) => {
   const [alphaRef, { width }] = useBoundingClientRect<HTMLDivElement>();
 
   const position = useMemo(() => {
@@ -22,15 +23,16 @@ export const Alpha = memo(({ color, onChange, disabled }: IAlphaProps) => {
   }, [color.hsv.a, width]);
 
   const updateColor = useCallback(
-    (x: number) => {
+    (x: number, _y: number, final?: boolean) => {
       const nextColor = ColorService.convert("hsv", {
         ...color.hsv,
         a: x / width,
       });
 
       onChange(nextColor);
+      if (final) onChangeComplete?.(nextColor);
     },
-    [color.hsv, width, onChange]
+    [color.hsv, width, onChange, onChangeComplete]
   );
 
   const rgb = useMemo(() => [color.rgb.r, color.rgb.g, color.rgb.b].join(" "), [color.rgb.r, color.rgb.g, color.rgb.b]);
