@@ -21,7 +21,7 @@
 /demo
 
 # Production
-/dist
+# /dist
 
 # Env
 .env
